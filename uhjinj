@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anna Júlia & Thiago</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2d2d2d;
+            --secondary: #e63946;
+            --accent: #f4a261;
+            --text: #f1faee;
+        }
+
+        body {
+            font-family: 'Lora', serif;
+            background: var(--primary);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--secondary);
+            letter-spacing: 0.05em;
+            margin: 0;
+        }
+
+        .carousel-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Largura máxima do carrossel */
+            margin: 2rem auto;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .carousel {
+            display: flex;
+            width: 300%; /* 3 imagens = 300% */
+            transition: transform 3s ease-in-out;
+        }
+
+        .carousel img {
+            width: 33.33%; /* Cada imagem ocupa 100% do contêiner */
+            height: 33.33%; /* Altura ajustada automaticamente */
+            aspect-ratio: 3 / 3; /* Proporção 3:3 */
+            object-fit: cover; /* Cobre o espaço sem distorcer */
+            flex-shrink: 0;
+        }
+
+        .timeline {
+            text-align: center;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .message {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+            color: var(--text);
+        }
+
+        .emoji-rain {
+            position: fixed;
+            pointer-events: none;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+        }
+
+        .emoji {
+            position: absolute;
+            font-size: 1.2rem;
+            animation: fall linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
+
+        .audio-control {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+
+        .audio-button {
+            padding: 0.8rem 1.5rem;
+            background: var(--secondary);
+            border: none;
+            border-radius: 25px;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .audio-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(241, 250, 238, 0.6);
+            font-size: 0.9rem;
+        }
+    </style>
+</head
+<body>
+    <div class="container">
+        <header>
+            <h1>Anna Júlia & Thiago</h1>
+        </header>
+
+        <div class="carousel-container">
+            <div class="carousel">
+                <img src="image2.jpg" alt="Nossa história">
+                <img src="image3.jpg" alt="Momentos especiais">
+                <img src="image1.jpg" alt="Nossa jornada">
+            </div>
+        </div>
+
+        <div class="timeline">
+            <p class="message" id="message"></p>
+        </div>
+    </div>
+
+    <div class="emoji-rain"></div>
+
+    <div class="audio-control">
+        <button class="audio-button" id="music-button">
+            <span>🎵</span>
+            <span>Tocar música</span>
+        </button>
+    </div>
+
+    <footer>
+        Construído com ❤️ por Thiago - 2025
+    </footer>
+
+    <audio id="background-music" loop>
+        <source src="sunshine.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        // Configurações
+        const startDate = new Date(2024, 4, 7); // 7 de maio de 2024
+        const emojis = ['❤️'];
+        const carouselInterval = 5000; // Tempo de exibição de cada imagem (5 segundos)
+
+        // Função para calcular o tempo de namoro
+        function calculateTime() {
+            const now = new Date();
+            const diff = now - startDate;
+
+            const years = now.getFullYear() - startDate.getFullYear();
+            const months = now.getMonth() - startDate.getMonth();
+            const days = now.getDate() - startDate.getDate();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+
+            // Ajuste para meses e dias negativos
+            let adjustedMonths = months;
+            let adjustedDays = days;
+
+            if (months < 0) {
+                adjustedMonths = 12 + months;
+            }
+            if (days < 0) {
+                const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 0).getDate();
+                adjustedDays = lastDayOfMonth + days;
+            }
+
+            return { years, months: adjustedMonths, days: adjustedDays, hours, minutes };
+        }
+
+        // Função para atualizar a mensagem
+        function updateMessage() {
+            const { years, months, days, hours, minutes } = calculateTime();
+            const messageElement = document.getElementById('message');
+            messageElement.innerHTML = `
+                Oi, amor! Desculpe a demora 😊<br><br>
+                Hoje celebramos <strong>${years} ano${years !== 1 ? 's' : ''},
+                ${months} mes${months !== 1 ? 'es' : ''},
+                ${days} dia${days !== 1 ? 's' : ''},
+                ${hours} hora${hours !== 1 ? 's' : ''} e
+                ${minutes} minuto${minutes !== 1 ? 's' : ''}</strong> de uma jornada incrível juntos.<br><br>
+                Cada momento ao seu lado reforça o quanto sou grato por tudo que construímos. Aqui está para muitos capítulos futuros desta história que amo escrever com você. Te amo! ❤️
+            `;
+        }
+
+        // Função para criar emojis
+        function createEmoji() {
+            const emoji = document.createElement('div');
+            emoji.className = 'emoji';
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.style.left = `${Math.random() * 100}vw`;
+            emoji.style.animationDuration = `${Math.random() * 3 + 5}s`;
+            document.querySelector('.emoji-rain').appendChild(emoji);
+
+            setTimeout(() => emoji.remove(), 10000);
+        }
+
+        // Função para inicializar o carrossel
+        function initCarousel() {
+            const carousel = document.querySelector('.carousel');
+            const images = document.querySelectorAll('.carousel img');
+            let currentIndex = 0;
+
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % images.length;
+                const offset = -currentIndex * 100; // Move o carrossel para a próxima imagem
+                carousel.style.transform = `translateX(${offset}%)`;
+
+                // Reinicia o carrossel após a última imagem
+                if (currentIndex === images.length - 1) {
+                    setTimeout(() => {
+                        carousel.style.transition = 'none'; // Remove a transição
+                        carousel.style.transform = 'translateX(0)'; // Volta ao início
+                        setTimeout(() => {
+                            carousel.style.transition = 'transform 0.5s ease-in-out'; // Restaura a transição
+                        }, 50);
+                    }, carouselInterval);
+                }
+            }, carouselInterval);
+        }
+
+        // Inicialização
+        function init() {
+            initCarousel(); // Inicializa o carrossel
+            setInterval(createEmoji, 300); // Inicia a chuva de emojis
+            setInterval(updateMessage, 1000); // Atualiza a mensagem
+            updateMessage(); // Exibe a mensagem inicial
+
+            // Controle de áudio
+            const musicButton = document.getElementById('music-button');
+            const music = document.getElementById('background-music');
+
+            musicButton.addEventListener('click', () => {
+                music.play();
+                musicButton.style.display = 'none';
+            });
+
+            try {
+                music.play();
+            } catch (e) {
+                musicButton.style.display = 'flex';
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
